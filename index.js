@@ -4,9 +4,11 @@ const server = express();
 server.use(express.json());
 // server.use(express.urlencoded());
 
-const port = 5000;
+const port = process.env.SERVER_PORT || 5000;
+console.log(process.env.SERVER_PORT, "serverpppppp");
+// console.log(process.argv)
 
-const channels = [];
+let channels = [];
 const lessons = [];
 
 server.get("/", (req, res) => {
@@ -22,7 +24,7 @@ server.get("/hello", (req, res) => {
 });
 
 server.get("/api/channels", (req, res) => {
-  res.status(201).json(channels);
+  res.status(200).json(channels);
 });
 
 server.post("/api/channels", (req, res) => {
@@ -65,6 +67,7 @@ server.delete("/api/channels/:id", (req, res) => {
     });
   }
 });
+
 server.get("/api/lessons/:id", (req, res) => {
   const { id } = req.params;
   const found = lessons.find((lesson) => lesson.id === id);
@@ -101,6 +104,6 @@ server.patch("/api/channels/:id", (req, res) => {
   }
 });
 
-server.listen(5000, () => {
+server.listen(port, () => {
   console.log(`${port}`);
 });
