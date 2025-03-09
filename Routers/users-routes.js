@@ -3,26 +3,6 @@ const Lessons = require("../models/dbHelpers");
 
 const router = express.Router();
 
-router.post("/register", (req, res) => {
-  const credentials = req.body;
-  const { username, password } = credentials;
-
-  if (!(username && password)) {
-    return res.status(400).json({ message: "username and password required " });
-  }
-  Lessons.addUser(credentials)
-    .then((user) => {
-      res.status(200).json(user);
-    })
-    .catch((error) => {
-      if (error.errno == 19) {
-        res.status(400).json({ message: "username already taken" });
-      } else {
-        res.status(500).json(error);
-      }
-    });
-});
-
 router.get("/", (req, res) => {
   Lessons.findAllUsers()
     .then((users) => {
