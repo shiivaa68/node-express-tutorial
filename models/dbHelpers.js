@@ -1,6 +1,7 @@
-const knex = require("knex");
-const config = require("../knexfile");
-const db = knex(config.development);
+// const knex = require("knex");
+// const config = require("../knexfile");
+// const db = knex(config.development);
+const db = require("../dbConfig");
 
 module.exports = {
   add,
@@ -11,7 +12,22 @@ module.exports = {
   addMessage,
   findLessonMessages,
   removeMessage,
+  addUser,
+  findAllUsers,
+  findUserByUsername,
 };
+
+async function addUser(user) {
+  return await db("users").insert(user, ["id", "username"]);
+}
+
+function findAllUsers() {
+  return db("users");
+}
+
+function findUserByUsername(username) {
+  return db("users").where({ username }).first();
+}
 
 async function add(lesson) {
   const [id] = await db("lessons").insert(lesson);
