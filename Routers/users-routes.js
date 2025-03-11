@@ -4,6 +4,8 @@ const Lessons = require("../models/dbHelpers");
 const router = express.Router();
 
 router.get("/", (req, res) => {
+  const id = req.decodedToken.id;
+  console.log(id, "id");
   Lessons.findAllUsers()
     .then((users) => {
       res.status(200).json(users);

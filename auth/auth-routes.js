@@ -1,6 +1,7 @@
 const express = require("express");
 const Lessons = require("../models/dbHelpers");
 const bcrypt = require("bcryptjs");
+const generateToken = require("./generateToken");
 const router = express.Router();
 
 router.post("/register", (req, res) => {
@@ -35,11 +36,16 @@ router.post("/login", (req, res) => {
   Lessons.findUserByUsername(username)
     .then((user) => {
       if (user && bcrypt.compareSync(password, user.password)) {
-        req.session.user = {
-          id: user.id,
-          username: user.username,
-        };
-        res.status(200).json({ message: `welcome ${user.username}` });
+        // session
+        // req.session.user = {
+        //   id: user.id,
+        //   username: user.username,
+        // };
+
+        //create token
+        const token = generateToken(user);
+        console.log(token, "token hastan");
+        res.status(200).json({ message: `welcome ${user.username}`, token });
       } else {
         res.status(401).json({ message: "invallid credential" });
       }
@@ -49,18 +55,18 @@ router.post("/login", (req, res) => {
     });
 });
 
-router.get('/logout',(req,res)=>{
-  if(req.session){
-    req.session.destroy(error=>{
-      if(error){
-        res.status(500).json({message:"we hope see you soon again!"})
-      }else{
-        res.status(200).json({messahe:'succsesfully logged out'})
+router.get("/logout", (req, res) => {
+  if (req.session) {
+    req.session.destroy((error) => {
+      if (error) {
+        res.status(500).json({ message: "we hope see you soon again!" });
+      } else {
+        res.status(200).json({ messahe: "succsesfully logged out" });
       }
-    })
-  }else{
-    res.status(200).json({message:'not logged in'})
+    });
+  } else {
+    res.status(200).json({ message: "not logged in" });
   }
-})
+});
 
 module.exports = router;
