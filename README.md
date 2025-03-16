@@ -22,3 +22,4 @@ a 'cohort'
 - express use res, res but typed
 - you should be able to get url params, req.body and url search queores in a typed version
 - create a branch and use sequelize instead of knex
+- create github actions ci pipeline
