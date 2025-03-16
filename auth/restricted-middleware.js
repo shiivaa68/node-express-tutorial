@@ -15,10 +15,4 @@ module.exports = (req, res, next) => {
   } else {
     res.status(401).json({ message: "no token recieved" });
   }
-  // console.log("req.session", req.session);
-  // if (req.session && req.session.user) {
-  //   next();
-  // } else {
-  //   res.status(401).json({ message: "sorry dude/dudette,cannot let you in " });
-  // }
 };
