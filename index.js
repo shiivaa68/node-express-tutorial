@@ -1,9 +1,16 @@
+const express = require("express");
+const { SERVER_PORT } = require("./config");
+const App = require("./app");
 require("dotenv").config();
 
-const server = require("./api/server");
+const startServer = async () => {
+  const server = express();
 
-const port = process.env.PORT || 5000;
+  await App(server);
 
-server.listen(port, () => {
-  console.log(`server is ready on: http://localhost:${port}`);
-});
+  server.listen(SERVER_PORT, () => {
+    console.log(`server is ready on: http://localhost:${SERVER_PORT}...`);
+  });
+};
+
+startServer();

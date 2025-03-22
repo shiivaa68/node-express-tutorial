@@ -1,11 +1,11 @@
 const express = require("express");
-const Lessons = require("../models/dbHelpers");
+const UserModel = require("../models/userModel");
 
 const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
-    const users = await Lessons.findAllUsers();
+    const users = await UserModel.findAllUsers();
     res.status(200).json(users);
   } catch (error) {
     console.log({ error });
@@ -16,7 +16,7 @@ router.get("/", async (req, res) => {
 router.get("/:username", async (req, res) => {
   try {
     const { username } = req.params;
-    const user = await Lessons.findUserByUsername(username);
+    const user = await UserModel.findUserByUsername(username);
     if (!user) {
       return res.status(404).json({ message: "user not found" });
     }
@@ -28,6 +28,5 @@ router.get("/:username", async (req, res) => {
     res.status(500).json(error);
   }
 });
-
 
 module.exports = router;

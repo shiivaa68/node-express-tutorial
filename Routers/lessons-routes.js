@@ -1,11 +1,12 @@
 const express = require("express");
-const Lessons = require("../models/dbHelpers");
+const LessonModel = require("../models/lessonModel");
+const MessageModel = require("../models/messageModel");
 
 const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
-    const lessons = await Lessons.find();
+    const lessons = await LessonModel.find();
     res.status(200).json(lessons);
   } catch (error) {
     res.status(500).json({ message: "Can't retrieve lessons" });
@@ -14,7 +15,7 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
-    const lesson = await Lessons.add(req.body);
+    const lesson = await LessonModel.add(req.body);
     res.status(200).json(lesson);
   } catch (error) {
     res.status(500).json({ message: "Cannot add lesson" });
@@ -24,7 +25,7 @@ router.post("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const lesson = await Lessons.findById(id);
+    const lesson = await LessonModel.findById(id);
 
     if (lesson) {
       res.status(200).json(lesson);
@@ -39,7 +40,7 @@ router.get("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const count = await Lessons.remove(id);
+    const count = await LessonModel.remove(id);
 
     if (count > 0) {
       res.status(200).json({ message: "Successfully deleted" });
@@ -55,7 +56,7 @@ router.patch("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
     const changes = req.body;
-    const lesson = await Lessons.update(id, changes);
+    const lesson = await LessonModel.update(id, changes);
 
     if (lesson) {
       res.status(200).json(lesson);
@@ -78,7 +79,7 @@ router.post("/:id/messages", async (req, res) => {
     }
 
     // Check if the lesson exists
-    const lesson = await Lessons.findById(id);
+    const lesson = await LessonModel.findById(id);
     if (!lesson) {
       return res.status(404).json({ message: "Invalid lesson ID" });
     }
@@ -91,7 +92,7 @@ router.post("/:id/messages", async (req, res) => {
     }
 
     // Add the message
-    const message = await Lessons.addMessage(msg, id);
+    const message = await MessageModel.addMessage(msg, id);
     if (message) {
       res.status(200).json(message);
     } else {
@@ -107,7 +108,7 @@ router.post("/:id/messages", async (req, res) => {
 router.get("/:id/messages", async (req, res) => {
   try {
     const { id } = req.params;
-    const lessons = await Lessons.findLessonMessages(id);
+    const lessons = await MessageModel.findLessonMessages(id);
     res.status(200).json(lessons);
   } catch (error) {
     res

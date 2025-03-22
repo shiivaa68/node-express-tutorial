@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-module.exports = (req, res, next) => {
+const checkToken = (req, res, next) => {
   const token = req.headers.authorization;
   const secret = process.env.SECRET;
   if (token) {
@@ -16,3 +16,5 @@ module.exports = (req, res, next) => {
     res.status(401).json({ message: "no token recieved" });
   }
 };
+
+module.exports = checkToken;
