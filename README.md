@@ -16,6 +16,7 @@ a 'cohort'
 # TODO:
 
 - Separate, Service layer (Database calls), Controller Layer (req, res and returns reuslt to user), routers (routes every request to related controller), data layer
+- User Service (move the logic in users-route.js into user service and call the relative functions)
 - DTO
 - convert to typescript, by initiating a tsc init
 - entity -> create an interface or type

@@ -1,13 +1,9 @@
 const db = require("../dbConfig");
 
 async function add(lesson) {
-  const [id] = await db("lessons").insert(lesson);
-  // return id;
+  const insertedLesson = await db("lessons").insert(lesson).returning("*");
+  return insertedLesson[0];
 }
-
-
-
-
 
 function find() {
   return db("lessons");
@@ -34,5 +30,4 @@ module.exports = {
   findById,
   remove,
   update,
-  
 };

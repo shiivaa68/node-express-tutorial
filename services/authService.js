@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const DbInstance = require("../models/userModel");
 const generateToken = require("../controllers/generateToken");
+const UserDTO = require("../dtos/UserDto");
 
 const AuthService = () => {
   const registerUser = async (credentials) => {
@@ -36,24 +37,9 @@ const AuthService = () => {
     }
     // generate token for authenticated user
     const token = generateToken(user);
-    return { username: user.username, token };
-  };
 
-  // // const logoutUser = async (req) => {
-  // //   return new Promise((resolve, reject) => {
-  // //     if (req.session) {
-  // //       req.session.destroy((error) => {
-  // //         if (error) {
-  // //           reject(new Error("We hope to see you again soon!"));
-  // //         } else {
-  // //           resolve({ message: "Successfully logged out" });
-  // //         }
-  // //       });
-  // //     } else {
-  // //       resolve({ message: "Not logged in" });
-  // //     }
-  // //   });
-  // };
+    return new UserDTO(user, token);
+  };
 
   return { registerUser, loginUser };
 };

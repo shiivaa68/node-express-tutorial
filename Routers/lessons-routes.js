@@ -1,12 +1,13 @@
 const express = require("express");
-const LessonModel = require("../models/lessonModel");
-const MessageModel = require("../models/messageModel");
-
+const LessonService = require("../services/lessonService");
+const lessonService = require("../services/lessonService");
 const router = express.Router();
+
+const MessageDTO = require("../dtos/MessageDTO");
 
 router.get("/", async (req, res) => {
   try {
-    const lessons = await LessonModel.find();
+    const lessons = await LessonService.findAllLessions();
     res.status(200).json(lessons);
   } catch (error) {
     res.status(500).json({ message: "Can't retrieve lessons" });
@@ -15,8 +16,8 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
-    const lesson = await LessonModel.add(req.body);
-    res.status(200).json(lesson);
+    const lessonInfo = await LessonService.addLesson(req.body);
+    res.status(200).json(lessonInfo);
   } catch (error) {
     res.status(500).json({ message: "Cannot add lesson" });
   }
@@ -25,7 +26,7 @@ router.post("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const lesson = await LessonModel.findById(id);
+    const lesson = await LessonService.findlessonById(id);
 
     if (lesson) {
       res.status(200).json(lesson);
@@ -40,9 +41,9 @@ router.get("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const count = await LessonModel.remove(id);
+    const deletedLesson = await LessonService.deleteLesson(id);
 
-    if (count > 0) {
+    if (deletedLesson > 0) {
       res.status(200).json({ message: "Successfully deleted" });
     } else {
       res.status(404).json({ message: "Unable to locate record" });
@@ -56,16 +57,28 @@ router.patch("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
     const changes = req.body;
-    const lesson = await LessonModel.update(id, changes);
+    const updatedLesson = await LessonService.updateLesson(id, changes);
 
-    if (lesson) {
-      res.status(200).json(lesson);
+    if (updatedLesson) {
+      res.status(200).json(updatedLesson);
     } else {
       res.status(404).json({ message: "Record not found" });
     }
   } catch (error) {
     next(error);
     // res.status(500).json({ message: "Error updating record", error: error.message });
+  }
+});
+
+router.get("/:id/messages", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const lessons = await lessonService.findLessonMessagesAll(id);
+    res.status(200).json(lessons);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error retrieving messages", error: error.message });
   }
 });
 
@@ -78,23 +91,12 @@ router.post("/:id/messages", async (req, res) => {
       msg.lesson_id = parseInt(id, 10);
     }
 
-    // Check if the lesson exists
-    const lesson = await LessonModel.findById(id);
-    if (!lesson) {
-      return res.status(404).json({ message: "Invalid lesson ID" });
-    }
-
-    // Validate required fields
-    if (!msg.sender || !msg.text) {
-      return res
-        .status(400)
-        .json({ message: "Must provide both sender and text values" });
-    }
-
     // Add the message
-    const message = await MessageModel.addMessage(msg, id);
+    const message = await LessonService.addMessageToLesson(msg, id);
     if (message) {
-      res.status(200).json(message);
+      const messageDTO = new MessageDTO(message); //transform the model into dto
+
+      res.status(200).json(messageDTO);
     } else {
       res.status(500).json({ message: "Failed to add message" });
     }
@@ -102,18 +104,6 @@ router.post("/:id/messages", async (req, res) => {
     res
       .status(500)
       .json({ message: "An error occurred", error: error.message });
-  }
-});
-
-router.get("/:id/messages", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const lessons = await MessageModel.findLessonMessages(id);
-    res.status(200).json(lessons);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error retrieving messages", error: error.message });
   }
 });
 

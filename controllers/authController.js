@@ -41,25 +41,6 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// router.get("/logout", async (req, res) => {
-//   try {
-//     const response = await AuthService.logoutUser(req);
-//     console.log(response, "response");
-//     res.status(200).json(response);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-//   // if (req.session) {
-//   //   req.session.destroy((error) => {
-//   //     if (error) {
-//   //       res.status(500).json({ message: "we hope see you soon again!" });
-//   //     } else {
-//   //       res.status(200).json({ messahe: "succsesfully logged out" });
-//   //     }
-//   //   });
-//   // } else {
-//   //   res.status(200).json({ message: "not logged in" });
-//   // }
-// });
+
 
 module.exports = router;
