@@ -1,13 +1,14 @@
-const express = require("express");
+import express, { Request, Response } from "express";
+import AuthService from "../services/authService";
+import { Credentials } from '../types'
+// import bcrypt from "bcryptjs";
+// import generateToken from "./generateToken";
 
-const bcrypt = require("bcryptjs");
-const generateToken = require("./generateToken");
-const AuthService = require("../services/authService");
 const router = express.Router();
 
-router.post("/register", async (req, res) => {
+router.post("/register", async (req: Request, res: Response) => {
   try {
-    const credentials = req.body;
+    const credentials: Credentials = req.body;
     const user = await AuthService.registerUser(credentials);
 
     res.status(200).json(user);
@@ -27,10 +28,9 @@ router.post("/register", async (req, res) => {
   }
 });
 
-
-router.post("/login", async (req, res) => {
+router.post("/login", async (req: Request, res: Response) => {
   try {
-    const credentials = req.body;
+    const credentials: Credentials = req.body;
     const user = await AuthService.loginUser(credentials);
 
     res
@@ -41,6 +41,4 @@ router.post("/login", async (req, res) => {
   }
 });
 
-
-
-module.exports = router;
+export default router;

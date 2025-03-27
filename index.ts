@@ -1,6 +1,6 @@
-const express = require("express");
-const { SERVER_PORT } = require("./config");
-const App = require("./app");
+import express from "express";
+import { SERVER_PORT } from "./config";
+import App from "./app";
 require("dotenv").config();
 
 const startServer = async () => {

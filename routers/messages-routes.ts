@@ -1,13 +1,12 @@
-const express = require("express");
-const messageService = require("../services/messageService");
+import express, { Request, Response } from "express";
+import messageService from "../services/messageService";
 
 const router = express.Router();
-//
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
-    const resultMeesage = await messageService.deleteMessageUser(id);
+    const resultMeesage = await messageService.deleteMessageUser(parseInt(id));
     if (resultMeesage == 0) {
       throw new Error("No message found with that id");
     }
@@ -22,4 +21,4 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

@@ -1,10 +1,13 @@
-const bcrypt = require("bcryptjs");
-const DbInstance = require("../models/userModel");
-const generateToken = require("../controllers/generateToken");
-const UserDTO = require("../dtos/UserDto");
+import bcrypt from "bcryptjs";
+import UserModel from "../models/userModel";
+import generateToken from "../controllers/generateToken";
+import UserDTO from "../dtos/UserDTO";
+import type { Credentials, User, AddUserResult, LoginResult } from "../types";
 
 const AuthService = () => {
-  const registerUser = async (credentials) => {
+  const registerUser = async (
+    credentials: Credentials
+  ): Promise<AddUserResult> => {
     const { username, password } = credentials;
 
     if (!(username && password)) {
@@ -16,17 +19,17 @@ const AuthService = () => {
     const hash = bcrypt.hashSync(password, 12);
     credentials.password = hash;
 
-    const user = await DbInstance.addUser(credentials);
+    const user = await UserModel.addUser(credentials);
     return user;
   };
 
-  const loginUser = async (credentials) => {
+  const loginUser = async (credentials: Credentials): Promise<LoginResult> => {
     const { username, password } = credentials;
-    if (!(username, password)) {
+    if (!(username && password)) {
       throw new Error("username and password are required");
     }
     // find user in the Database
-    const user = await DbInstance.findUserByUsername(username);
+    const user = await UserModel.findUserByUsername(username);
 
     if (!user) {
       throw new Error("Invalid credentials");
@@ -36,12 +39,14 @@ const AuthService = () => {
       throw new Error("Invalid credentials");
     }
     // generate token for authenticated user
-    const token = generateToken(user);
+    const token = generateToken({ id: user.id, username: user.username });
 
-    return new UserDTO(user, token);
+    const userData = UserDTO.fromUser(user);
+
+    return { ...userData, token };
   };
 
   return { registerUser, loginUser };
 };
 
-module.exports = AuthService();
+export default AuthService();

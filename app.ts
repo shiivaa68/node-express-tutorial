@@ -1,12 +1,12 @@
-const express = require("express");
-const morgan = require("morgan");
-const helmet = require("helmet");
-const cors = require("cors");
-const lessonsRouter = require("./routers/lessons-routes");
-const messagesRouter = require("./routers/messages-routes");
-const usersRouter = require("./routers/users-routes");
-const authRouter = require("./controllers/authController");
-const checkTokenMiddleware = require("./middlewares/checkTokenMiddleware");
+import express from "express";
+import morgan from "morgan";
+import helmet from "helmet";
+import cors from "cors";
+import lessonsRouter from "./routers/lessons-routes";
+import messagesRouter from "./routers/messages-routes";
+import usersRouter from "./routers/users-routes";
+import authRouter from "./controllers/authController";
+import checkTokenMiddleware from "./middlewares/checkTokenMiddleware";
 
 const App = (app) => {
   // set up express configs
@@ -28,4 +28,4 @@ const App = (app) => {
   return app;
 };
 
-module.exports = App;
+export default App;
