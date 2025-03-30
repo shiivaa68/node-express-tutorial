@@ -20,6 +20,7 @@ jobs:
       # - name: Run tests
       #   run: npm test
   deploy:
+    needs: test
     runs-on: macos-latest
     steps:
       - name: Get code
