@@ -1,6 +1,6 @@
 name: Test Project
 
-on: push
+on: [push, workflow_dispatch]
 
 jobs:
   test:
@@ -37,4 +37,4 @@ jobs:
       - name: Build project
         run: npm run build
       - name: Deploy
-        run: echo "Deployment ..."   
+        run: echo "Deployment ..."
