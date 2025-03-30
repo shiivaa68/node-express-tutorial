@@ -13,14 +13,47 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
+      - name: Cach dependenci
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Install Dependencies
         run: npm ci
 
       # - name: Run tests
       #   run: npm test
-  deploy:
+  build:
     needs: test
+    runs-on: macos-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+
+      - name: Cach dependenci
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm run build
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-files
+          path: dist
+          # path: |
+          #   dist
+          #   package.json
+
+  deploy:
+    needs: build
     runs-on: macos-latest
     steps:
       - name: Get code
@@ -30,11 +63,24 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
+      - name: Cach dependenci
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Install Dependencies
         run: npm ci
 
       - name: Build project
         run: npm run build
+      - name: Get build artifacts
+        uses: actions/dowmload-artifact@v3
+        with:
+          name: dist-files
+      - name: Output contents
+        run: ls
       - name: Deploy
         run: echo "Deployment ..."
