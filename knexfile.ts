@@ -1,11 +1,7 @@
-// Update with your config settings.
-
-// const { client } = require("./dbConfig");
-
 /**
  * @type { Object.<string, import("knex").Knex.Config> }
  */
-module.exports = {
+export default {
   development: {
     client: "sqlite3",
     useNullAsDefault: true,

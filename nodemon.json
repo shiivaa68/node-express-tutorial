@@ -1,4 +1,7 @@
 {
+  "watch": ["."],  
+  "ext": "js,ts,json",  
+  "ignore": ["node_modules", "dist"], 
   "env": {
     "SERVER_PORT": 5000
   }
