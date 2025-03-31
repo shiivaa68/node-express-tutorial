@@ -1,0 +1,79 @@
+name: Using Reusable workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    env:
+      PORT: 5000
+    runs-on: macos-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+
+      - name: Install NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Cache dependenci
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: deps-node-modules-${{ hashFiles('package-lock.json') }}
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit !='true'
+        run: npm ci
+      - name: Run server
+        run: npm start & npx wait -on http://127.0.0.1:$PORT
+      - name: Test code
+        continue-on-error: true
+        id: run-tests
+        run: npm run test
+      - name: Upload test report
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-report
+          path: test.json
+  build:
+    needs: test
+    runs-on: macos-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+
+      - name: Cache dependenci
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: deps-node-modules-${{ hashFiles('package-lock.json') }}
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit !='true'
+        run: npm ci
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-files
+          path: dist
+          # path: |
+          #   dist
+          #   package.json
+
+  deploy:
+    needs: build
+    uses: ./.github/workflows/reusable.yml
+    with:
+      artifact-name: dist-files
+  report:
+    needs: [test, build, deploy]
+    if: failure()
+    runs-on: macos-latest
+    steps:
+      - name: Output information
+        run: |
+          echo "something  went wrong "
+          echo "${{ github }}"
