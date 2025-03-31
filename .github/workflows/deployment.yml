@@ -4,6 +4,8 @@ on: [push, workflow_dispatch]
 
 jobs:
   test:
+    env:
+      PORT: 5000
     runs-on: macos-latest
     steps:
       - name: Get code
@@ -13,19 +15,26 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Cach dependenci
+      - name: Cache dependenci
+        id: cache
         uses: actions/cache@v3
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
+          path: node_modules
+          key: deps-node-modules-${{ hashFiles('package-lock.json') }}
       - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit !='true'
         run: npm ci
-
-      # - name: Run tests
-      #   run: npm test
+      - name: Run server
+        run: npm start & npx wait -on http://127.0.0.1:$PORT
+      - name: Test code
+        id: run-tests
+        run: npm run test
+      - name: Upload test report
+        if: failure() && steps.run-tests.outcome == 'failure'
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-report
+          path: test.json
   build:
     needs: test
     runs-on: macos-latest
@@ -33,16 +42,15 @@ jobs:
       - name: Get code
         uses: actions/checkout@v3
 
-      - name: Cach dependenci
+      - name: Cache dependenci
+        id: cache
         uses: actions/cache@v3
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Install dependencies
-        run: npm run build
+          path: node_modules
+          key: deps-node-modules-${{ hashFiles('package-lock.json') }}
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit !='true'
+        run: npm ci
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -63,15 +71,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Cach dependenci
+      - name: Cache dependenci
+        id: cache
         uses: actions/cache@v3
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
+          path: node_modules
+          key: deps-node-modules-${{ hashFiles('package-lock.json') }}
       - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit !='true'
         run: npm ci
 
       - name: Build project
@@ -84,3 +91,12 @@ jobs:
         run: ls
       - name: Deploy
         run: echo "Deployment ..."
+  report:
+    needs: [test, build, deploy]
+    if: failure()
+    runs-on: macos-latest
+    steps:
+      - name: Output information
+        run: |
+          echo "something  went wrong "
+          echo "${{ github }}"
