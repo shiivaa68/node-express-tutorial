@@ -9,15 +9,15 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Get code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install NodeJS
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
       - name: Cache dependenci
         id: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: node_modules
           key: deps-node-modules-${{ hashFiles('package-lock.json') }}
@@ -31,7 +31,7 @@ jobs:
         id: run-tests
         run: npm run test
       - name: Upload test report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-report
           path: test.json
@@ -40,11 +40,11 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Get code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Cache dependenci
         id: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: node_modules
           key: deps-node-modules-${{ hashFiles('package-lock.json') }}
@@ -52,7 +52,7 @@ jobs:
         if: steps.cache.outputs.cache-hit !='true'
         run: npm ci
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dist-files
           path: dist
@@ -65,15 +65,15 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Get code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install NodeJS
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
       - name: Cache dependenci
         id: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: node_modules
           key: deps-node-modules-${{ hashFiles('package-lock.json') }}
@@ -84,7 +84,7 @@ jobs:
       - name: Build project
         run: npm run build
       - name: Get build artifacts
-        uses: actions/dowmload-artifact@v3
+        uses: actions/dowmload-artifact@v4
         with:
           name: dist-files
       - name: Output contents

@@ -1,10 +1,11 @@
 import { knexConfig as db } from "../dbConfig";
-import { Lesson } from "../types";
+import { Lesson,AddLessonResult } from "../types";
 
-async function add(lesson: Lesson): Promise<Lesson> {
+async function add(lesson: Lesson): Promise<AddLessonResult> {
   const insertedLesson = await db("lessons").insert(lesson).returning("*");
   return insertedLesson[0];
 }
+
 
 function find(): Promise<Lesson[]> {
   return db("lessons");

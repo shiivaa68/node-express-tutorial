@@ -1,9 +1,6 @@
-name: Using Reusable workflow
+name: Test Project
 
-on:
-  push:
-    branches:
-      - main
+on: [push, workflow_dispatch]
 
 jobs:
   test:
@@ -18,15 +15,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-      - name: Cache dependenci
-        id: cache
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: deps-node-modules-${{ hashFiles('package-lock.json') }}
-      - name: Install Dependencies
-        if: steps.cache.outputs.cache-hit !='true'
-        run: npm ci
+      - name: Load & cache dependenci
+        uses: ./.github/actions/cached-deps
       - name: Run server
         run: npm start & npx wait -on http://127.0.0.1:$PORT
       - name: Test code
@@ -45,15 +35,8 @@ jobs:
       - name: Get code
         uses: actions/checkout@v4
 
-      - name: Cache dependenci
-        id: cache
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: deps-node-modules-${{ hashFiles('package-lock.json') }}
-      - name: Install Dependencies
-        if: steps.cache.outputs.cache-hit !='true'
-        run: npm ci
+      - name: Load & cache dependenci
+        uses: ./.github/actions/cached-deps
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -65,9 +48,28 @@ jobs:
 
   deploy:
     needs: build
-    uses: ./.github/workflows/reusable.yml
-    with:
-      artifact-name: dist-files
+    runs-on: macos-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+
+      - name: Install NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Load & cache dependenci
+        uses: ./.github/actions/cached-deps
+
+      - name: Build project
+        run: npm run build
+      - name: Get build artifacts
+        uses: actions/dowmload-artifact@v4
+        with:
+          name: dist-files
+      - name: Output contents
+        run: ls
+      - name: Deploy
+        run: echo "Deployment ..."
   report:
     needs: [test, build, deploy]
     if: failure()
