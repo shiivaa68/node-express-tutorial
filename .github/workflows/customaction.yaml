@@ -9,10 +9,10 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Get code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install NodeJS
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 18
       - name: Load & cache dependenci
@@ -32,7 +32,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Get code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Load & cache dependenci
         id: cache-deps
@@ -42,7 +42,7 @@ jobs:
       - name: output information
         run: echo "cache used ? ${{ steps.cache-deps.outputs.used-cache }}"
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: dist-files
           path: dist
@@ -55,10 +55,10 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Get code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install NodeJS
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 18
       - name: Load & cache dependenci
@@ -67,7 +67,7 @@ jobs:
       - name: Build project
         run: npm run build
       - name: Get build artifacts
-        uses: actions/dowmload-artifact@v2
+        uses: actions/dowmload-artifact@v3
         with:
           name: dist-files
       - name: Output contents
