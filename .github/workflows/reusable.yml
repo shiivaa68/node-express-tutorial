@@ -1,0 +1,21 @@
+name: Reusable Deploy
+on:
+  workflow_call:
+    inputs:
+      artifact-name:
+        description: the name of the deployable file
+        required: false
+        default: dist
+        type: string
+jobs:
+  deploy:
+    runs-on: macos-latest
+    steps:
+      - name: get code
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ inputs.artifact-name }}
+      - name: list files
+        run: ls
+      - name: output information
+        run: echo "deploying & uploading ..."

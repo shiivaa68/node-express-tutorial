@@ -3,7 +3,7 @@ import messageService from "../services/messageService";
 
 const router = express.Router();
 
-router.delete("/:id", async (req: Request, res: Response): Promise<void> => {
+router.delete("/:id", async (req: Request<{id:string}>, res: Response) => {
   try {
     const { id } = req.params;
     const resultMeesage = await messageService.deleteMessageUser(parseInt(id));

@@ -11,23 +11,14 @@ jobs:
       - name: Get code
         uses: actions/checkout@v3
 
-      - name:  Install NodeJS
+      - name: Install NodeJS
         uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Cache dependenci
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: deps-node-modules-${{ hashFiles('package-lock.json') }}
-      - name: Install Dependencies
-        if: steps.cache.outputs.cache-hit !='true'
-        run: npm ci
+      - name: Load & cache dependenci
+        uses: ./.github/actions/cached-deps
       - name: Run server
-        run: |
-          npm start & 
-          npx wait-on http://127.0.0.1:$PORT
+        run: npm start & npx wait-on http://127.0.0.1:$PORT
       # - name: Test code
       #   continue-on-error: true
       #   id: run-tests
@@ -38,26 +29,23 @@ jobs:
       #     name: test-report
       #     path: test.json
   build:
-    # needs: test
     runs-on: macos-latest
     steps:
       - name: Get code
         uses: actions/checkout@v3
 
-      - name: Cache dependenci
-        id: cache
-        uses: actions/cache@v3
+      - name: Load & cache dependenci
+        id: cache-deps
+        uses: ./.github/actions/cached-deps
         with:
-          path: node_modules
-          key: deps-node-modules-${{ hashFiles('package-lock.json') }}
-      - name: Install Dependencies
-        if: steps.cache.outputs.cache-hit !='true'
-        run: npm ci
+          caching: "false"
+      - name: output information
+        run: echo "cache used ? ${{ steps.cache-deps.outputs.used-cache }}"
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
           name: dist-files
-          path: ./dist
+          path: dist
           # path: |
           #   dist
           #   package.json
@@ -73,15 +61,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Cache dependenci
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: deps-node-modules-${{ hashFiles('package-lock.json') }}
-      - name: Install Dependencies
-        if: steps.cache.outputs.cache-hit !='true'
-        run: npm ci
+      - name: Load & cache dependenci
+        uses: ./.github/actions/cached-deps
 
       - name: Build project
         run: npm run build
@@ -94,7 +75,7 @@ jobs:
       - name: Deploy
         run: echo "Deployment ..."
   report:
-    needs: [build, deploy]
+    needs: [ build, deploy]
     if: failure()
     runs-on: macos-latest
     steps:

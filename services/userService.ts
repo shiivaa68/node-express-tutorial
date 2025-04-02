@@ -3,6 +3,7 @@ import UserDTO from "../dtos/UserDTO";
 import { User } from "../types";
 
 const UserService = () => {
+  
   const getAllUser = async (): Promise<UserDTO[]> => {
     const users: User[] = await UserModel.findAllUsers();
     return users.map((user) => UserDTO.fromUser(user));

@@ -1,6 +1,4 @@
 import express, { Request, Response } from "express";
-import UserModel from "../models/userModel";
-import UserDTO from "../dtos/UserDTO";
 import UserService from "../services/userService";
 
 const router = express.Router();

@@ -1,13 +1,8 @@
 // const db = require("../dbConfig");
 import { knexConfig as db } from "../dbConfig";
+import { Message,AddMessageResult } from "../types";
 
-interface Message {
-  id: number;
-  lesson_id: number;
-  sender: string;
-  text: string;
-  createdAt?: Date;
-}
+
 
 function findMessageById(id: number): Promise<Message | undefined> {
   return db("messages").where({ id }).first();
@@ -16,12 +11,8 @@ function findMessageById(id: number): Promise<Message | undefined> {
 async function addMessage(
   message: Partial<Message>,
   lesson_id: number
-): Promise<Message | undefined> {
-  // const messageWithCreatedAt = {
-  //   ...message,
-  //   createdAt: message.createdAt || new Date() , // If createdAt is not provided, use the current date
-  //   lesson_id, // Make sure lesson_id is included as well
-  // };
+): Promise<AddMessageResult | undefined> {
+
   const messageWithoutCreatedAt = {
     sender: message.sender,
     text: message.text,
@@ -34,8 +25,8 @@ async function addMessage(
   return findMessageById(id);
 }
 
-function findLessonMessages(lesson_id: number): Promise<Message[]> {
-  return db("lessons as l")
+async function findLessonMessages(lesson_id: number): Promise<AddMessageResult[]> {
+  const result =  await db("lessons as l")
     .join("messages as m", "l.id", "m.lesson_id")
     .select(
       "l.id as LessonID",
@@ -45,6 +36,7 @@ function findLessonMessages(lesson_id: number): Promise<Message[]> {
       "m.text"
     )
     .where({ lesson_id });
+    return result
 }
 function removeMessage(id: number): Promise<number> {
   return db("messages").where({ id: id }).del();

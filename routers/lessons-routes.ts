@@ -1,10 +1,9 @@
 import express, { Request, Response, NextFunction } from "express";
 import LessonService from "../services/lessonService";
 import lessonService from "../services/lessonService";
-import { Lesson } from "../types";
 const router = express.Router();
+import { Message,AddMessageResult } from "../types";
 
-import MessageDTO from "../dtos/MessageDTO";
 
 router.get("/", async (req: Request, res: Response) => {
   try {
@@ -77,7 +76,6 @@ router.patch(
       }
     } catch (error) {
       next(error);
-      // res.status(500).json({ message: "Error updating record", error: error.message });
     }
   }
 );
@@ -103,7 +101,7 @@ router.post(
     req: Request<
       { id: string },
       {},
-      { lesson_id?: number; sender: string; text: string }
+      { lesson_id: number; sender: string; text: string }
     >,
     res: Response
   ) => {
@@ -118,9 +116,9 @@ router.post(
       // Add the message
       const message = await LessonService.addMessageToLesson(msg, parseInt(id));
       if (message) {
-        const messageDTO = new MessageDTO(message); //transform the model into dto
+        // const messageDTO = new AddMessageResult(message); //transform the model into dto
 
-        res.status(200).json(messageDTO);
+        res.status(200).json(message);
       } else {
         res.status(500).json({ message: "Failed to add message" });
       }
