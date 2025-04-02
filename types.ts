@@ -17,6 +17,7 @@ export interface User extends Credentials {
 export type AddUserResult = InstanceType<typeof UserDTO>;
 export type LoginResult = InstanceType<typeof UserDTO> & { token: string };
 export type AddLessonResult = InstanceType<typeof LessonDTO>;
+export type AddMessageResult = InstanceType<typeof MessageDTO>;
 
 export interface Lesson {
   id: number;

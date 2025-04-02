@@ -2,20 +2,9 @@ import LessonModel from "../models/lessonModel";
 import LessonDTO from "../dtos/LessonDTO";
 import MessageModel from "../models/messageModel";
 import MessageDTO from "../dtos/MessageDTO";
+import { Lesson,Message } from "../types";
 
-interface Lesson {
-  id: number;
-  name: string;
-  created_at: Date;
-  updated_at: Date;
-}
-interface Message {
-  id: number;
-  lesson_id: number;
-  sender: string;
-  text: string;
-  created_at?: Date;
-}
+
 const LessonService = () => {
   
   const findAllLessions = async (): Promise<LessonDTO[]> => {

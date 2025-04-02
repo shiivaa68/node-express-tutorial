@@ -36,7 +36,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Load & cache dependenci
+        id: cache-deps
         uses: ./.github/actions/cached-deps
+        with:
+          caching: "false"
+      - name: output information
+        run: echo "cache used ? ${{ steps.cache-deps.outputs.used-cache }}"
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:

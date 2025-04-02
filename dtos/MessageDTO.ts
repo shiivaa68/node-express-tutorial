@@ -5,7 +5,7 @@ class MessageDTO {
   lesson_id: number;
   sender: string;
   text: string;
-  createdAt?: Date;
+  createdAt: Date;
 
   constructor(message: Message) {
     this.id = message.id;
