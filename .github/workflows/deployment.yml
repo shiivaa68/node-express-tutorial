@@ -11,7 +11,7 @@ jobs:
       - name: Get code
         uses: actions/checkout@v3
 
-      - name: Install NodeJS
+      - name:  Install NodeJS
         uses: actions/setup-node@v3
         with:
           node-version: 18
@@ -25,7 +25,9 @@ jobs:
         if: steps.cache.outputs.cache-hit !='true'
         run: npm ci
       - name: Run server
-        run: npm start & npx wait -on http://127.0.0.1:$PORT
+        run: |
+          npm start & 
+          npx wait-on http://127.0.0.1:$PORT
       # - name: Test code
       #   continue-on-error: true
       #   id: run-tests
@@ -36,7 +38,7 @@ jobs:
       #     name: test-report
       #     path: test.json
   build:
-    needs: test
+    # needs: test
     runs-on: macos-latest
     steps:
       - name: Get code
@@ -84,7 +86,7 @@ jobs:
       - name: Build project
         run: npm run build
       - name: Get build artifacts
-        uses: actions/dowmload-artifact@v3
+        uses: actions/download-artifact@v3
         with:
           name: dist-files
       - name: Output contents
