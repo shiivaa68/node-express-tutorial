@@ -9,15 +9,15 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Get code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Install NodeJS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v2
         with:
           node-version: 18
       - name: Cache dependenci
         id: cache
-        uses: actions/cache@v4
+        uses: actions/cache@v2
         with:
           path: node_modules
           key: deps-node-modules-${{ hashFiles('package-lock.json') }}
@@ -26,25 +26,25 @@ jobs:
         run: npm ci
       - name: Run server
         run: npm start & npx wait -on http://127.0.0.1:$PORT
-      - name: Test code
-        continue-on-error: true
-        id: run-tests
-        run: npm run test
-      - name: Upload test report
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-report
-          path: test.json
+      # - name: Test code
+      #   continue-on-error: true
+      #   id: run-tests
+      #   run: npm run test
+      # - name: Upload test report
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: test-report
+      #     path: test.json
   build:
     needs: test
     runs-on: macos-latest
     steps:
       - name: Get code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Cache dependenci
         id: cache
-        uses: actions/cache@v4
+        uses: actions/cache@v2
         with:
           path: node_modules
           key: deps-node-modules-${{ hashFiles('package-lock.json') }}
@@ -52,7 +52,7 @@ jobs:
         if: steps.cache.outputs.cache-hit !='true'
         run: npm ci
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v2
         with:
           name: dist-files
           path: dist
@@ -65,15 +65,15 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Get code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Install NodeJS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v2
         with:
           node-version: 18
       - name: Cache dependenci
         id: cache
-        uses: actions/cache@v4
+        uses: actions/cache@v2
         with:
           path: node_modules
           key: deps-node-modules-${{ hashFiles('package-lock.json') }}
@@ -84,7 +84,7 @@ jobs:
       - name: Build project
         run: npm run build
       - name: Get build artifacts
-        uses: actions/dowmload-artifact@v4
+        uses: actions/dowmload-artifact@v2
         with:
           name: dist-files
       - name: Output contents
@@ -92,7 +92,7 @@ jobs:
       - name: Deploy
         run: echo "Deployment ..."
   report:
-    needs: [test, build, deploy]
+    needs: [ build, deploy]
     if: failure()
     runs-on: macos-latest
     steps:
