@@ -18,7 +18,7 @@ jobs:
       - name: Load & cache dependenci
         uses: ./.github/actions/cached-deps
       - name: Run server
-        run: npm start & npx wait -on http://127.0.0.1:$PORT
+        run: npm start & npx wait-on http://127.0.0.1:$PORT
       # - name: Test code
       #   continue-on-error: true
       #   id: run-tests
@@ -67,7 +67,7 @@ jobs:
       - name: Build project
         run: npm run build
       - name: Get build artifacts
-        uses: actions/dowmload-artifact@v3
+        uses: actions/download-artifact@v3
         with:
           name: dist-files
       - name: Output contents
