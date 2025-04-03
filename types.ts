@@ -22,8 +22,10 @@ export type AddMessageResult = InstanceType<typeof MessageDTO>;
 export interface Lesson {
   id: number;
   name: string;
-  created_at: Date;
-  updated_at: Date;
+  createdAt: Date; // Fix error
+  updatedAt: Date; // Fix error
+  // created_at: Date;
+  // updated_at: Date;
 }
 
 export interface Message {

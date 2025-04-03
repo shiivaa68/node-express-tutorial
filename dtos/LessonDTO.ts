@@ -9,8 +9,8 @@ class LessonDTO {
   constructor(lesson: Lesson) {
     this.id = lesson.id;
     this.name = lesson.name;
-    this.created_at = lesson.created_at;
-    this.updated_at = lesson.updated_at;
+    this.created_at = lesson.createdAt;
+    this.updated_at = lesson.updatedAt;
   }
 
   static fromLesson(lesson: Lesson) {

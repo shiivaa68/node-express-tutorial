@@ -2,11 +2,9 @@ import LessonModel from "../models/lessonModel";
 import LessonDTO from "../dtos/LessonDTO";
 import MessageModel from "../models/messageModel";
 import MessageDTO from "../dtos/MessageDTO";
-import { Lesson,Message } from "../types";
-
+import { Lesson, Message } from "../types";
 
 const LessonService = () => {
-  
   const findAllLessions = async (): Promise<LessonDTO[]> => {
     const lessons: Lesson[] = await LessonModel.find();
 
@@ -16,7 +14,8 @@ const LessonService = () => {
   //dont work i have a qauestion
   const addLesson = async (lessonData: Lesson): Promise<LessonDTO> => {
     const lesson = await LessonModel.add(lessonData);
-    return new LessonDTO(lesson);
+    return lesson;
+    // return new LessonDTO(lesson);
   };
 
   const findlessonById = async (id: number): Promise<LessonDTO> => {
